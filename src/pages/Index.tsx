@@ -368,7 +368,10 @@ const Index = () => {
                       <Icon name="Crosshair" size={48} className="text-neon-cyan mb-4" />
                       <h3 className="text-3xl font-orbitron font-bold mb-4">DEATHMATCH</h3>
                       <p className="text-muted-foreground mb-6">Классический режим свободной игры</p>
-                      <Button className="w-full bg-neon-cyan hover:bg-neon-cyan/80 text-black font-orbitron font-bold">
+                      <Button 
+                        onClick={() => setActiveSection('maps')}
+                        className="w-full bg-neon-cyan hover:bg-neon-cyan/80 text-black font-orbitron font-bold"
+                      >
                         ИГРАТЬ
                       </Button>
                     </Card>
@@ -377,7 +380,10 @@ const Index = () => {
                       <Icon name="Target" size={48} className="text-neon-purple mb-4" />
                       <h3 className="text-3xl font-orbitron font-bold mb-4">COMPETITIVE</h3>
                       <p className="text-muted-foreground mb-6">Соревновательный режим 5 на 5</p>
-                      <Button className="w-full bg-neon-purple hover:bg-neon-purple/80 text-white font-orbitron font-bold">
+                      <Button 
+                        onClick={() => setActiveSection('maps')}
+                        className="w-full bg-neon-purple hover:bg-neon-purple/80 text-white font-orbitron font-bold"
+                      >
                         ИГРАТЬ
                       </Button>
                     </Card>
