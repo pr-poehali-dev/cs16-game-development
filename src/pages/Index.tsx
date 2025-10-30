@@ -12,6 +12,8 @@ const Index = () => {
   const [aimbot, setAimbot] = useState(false);
   const [esp, setEsp] = useState(false);
   const [wallhack, setWallhack] = useState(false);
+  const [connectingServer, setConnectingServer] = useState<string | null>(null);
+  const [connectedServer, setConnectedServer] = useState<string | null>(null);
 
   const menuItems = [
     { id: 'home', label: 'Главная', icon: 'Home' },
@@ -37,6 +39,15 @@ const Index = () => {
     { name: 'de_mirage', players: 22, status: 'active' },
     { name: 'de_nuke', players: 16, status: 'medium' },
   ];
+
+  const handleConnectToServer = (serverName: string) => {
+    setConnectingServer(serverName);
+    setTimeout(() => {
+      setConnectingServer(null);
+      setConnectedServer(serverName);
+      setActiveSection('play');
+    }, 2000);
+  };
 
   const playerStats = {
     kills: 1547,
@@ -200,9 +211,22 @@ const Index = () => {
                         <Badge className={map.status === 'active' ? 'bg-neon-green/20 text-neon-green border-neon-green pulse-neon' : 'bg-yellow-500/20 text-yellow-500'}>
                           {map.status === 'active' ? 'АКТИВЕН' : 'СРЕДНЯЯ'}
                         </Badge>
-                        <Button className="bg-neon-cyan hover:bg-neon-cyan/80 text-black font-orbitron font-bold">
-                          <Icon name="LogIn" size={18} className="mr-2" />
-                          ПОДКЛЮЧИТЬСЯ
+                        <Button 
+                          onClick={() => handleConnectToServer(map.name)}
+                          disabled={connectingServer === map.name}
+                          className="bg-neon-cyan hover:bg-neon-cyan/80 text-black font-orbitron font-bold disabled:opacity-50"
+                        >
+                          {connectingServer === map.name ? (
+                            <>
+                              <Icon name="Loader2" size={18} className="mr-2 animate-spin" />
+                              ПОДКЛЮЧЕНИЕ...
+                            </>
+                          ) : (
+                            <>
+                              <Icon name="LogIn" size={18} className="mr-2" />
+                              ПОДКЛЮЧИТЬСЯ
+                            </>
+                          )}
                         </Button>
                       </div>
                     </div>
@@ -308,26 +332,58 @@ const Index = () => {
 
           {activeSection === 'play' && (
             <div className="space-y-6 animate-fade-in">
-              <h2 className="text-4xl font-orbitron font-black text-neon-cyan neon-glow mb-8">РЕЖИМЫ ИГРЫ</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="bg-card/50 border-neon-cyan/30 backdrop-blur-xl p-8 hover:neon-border transition-all">
-                  <Icon name="Crosshair" size={48} className="text-neon-cyan mb-4" />
-                  <h3 className="text-3xl font-orbitron font-bold mb-4">DEATHMATCH</h3>
-                  <p className="text-muted-foreground mb-6">Классический режим свободной игры</p>
-                  <Button className="w-full bg-neon-cyan hover:bg-neon-cyan/80 text-black font-orbitron font-bold">
-                    ИГРАТЬ
-                  </Button>
-                </Card>
+              {connectedServer ? (
+                <>
+                  <div className="flex items-center justify-between mb-8">
+                    <h2 className="text-4xl font-orbitron font-black text-neon-cyan neon-glow">ИГРА НА СЕРВЕРЕ</h2>
+                    <Badge className="bg-neon-green/20 text-neon-green border-neon-green pulse-neon px-4 py-2">
+                      <Icon name="Wifi" size={16} className="mr-2" />
+                      {connectedServer}
+                    </Badge>
+                  </div>
 
-                <Card className="bg-card/50 border-neon-purple/30 backdrop-blur-xl p-8 hover:neon-border transition-all">
-                  <Icon name="Target" size={48} className="text-neon-purple mb-4" />
-                  <h3 className="text-3xl font-orbitron font-bold mb-4">COMPETITIVE</h3>
-                  <p className="text-muted-foreground mb-6">Соревновательный режим 5 на 5</p>
-                  <Button className="w-full bg-neon-purple hover:bg-neon-purple/80 text-white font-orbitron font-bold">
-                    ИГРАТЬ
-                  </Button>
-                </Card>
-              </div>
+                  <Card className="bg-card/50 border-neon-cyan/30 backdrop-blur-xl p-12 text-center">
+                    <div className="space-y-6">
+                      <Icon name="Gamepad2" size={96} className="mx-auto text-neon-cyan animate-pulse" />
+                      <h3 className="text-4xl font-orbitron font-bold text-white neon-glow">ВЫ В ИГРЕ!</h3>
+                      <p className="text-xl text-muted-foreground">Подключение к серверу {connectedServer} успешно</p>
+                      <div className="flex gap-4 justify-center pt-6">
+                        <Button 
+                          onClick={() => setConnectedServer(null)}
+                          variant="outline" 
+                          className="border-neon-purple text-neon-purple hover:bg-neon-purple/20 font-orbitron neon-border"
+                        >
+                          <Icon name="LogOut" size={18} className="mr-2" />
+                          ОТКЛЮЧИТЬСЯ
+                        </Button>
+                      </div>
+                    </div>
+                  </Card>
+                </>
+              ) : (
+                <>
+                  <h2 className="text-4xl font-orbitron font-black text-neon-cyan neon-glow mb-8">РЕЖИМЫ ИГРЫ</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Card className="bg-card/50 border-neon-cyan/30 backdrop-blur-xl p-8 hover:neon-border transition-all">
+                      <Icon name="Crosshair" size={48} className="text-neon-cyan mb-4" />
+                      <h3 className="text-3xl font-orbitron font-bold mb-4">DEATHMATCH</h3>
+                      <p className="text-muted-foreground mb-6">Классический режим свободной игры</p>
+                      <Button className="w-full bg-neon-cyan hover:bg-neon-cyan/80 text-black font-orbitron font-bold">
+                        ИГРАТЬ
+                      </Button>
+                    </Card>
+
+                    <Card className="bg-card/50 border-neon-purple/30 backdrop-blur-xl p-8 hover:neon-border transition-all">
+                      <Icon name="Target" size={48} className="text-neon-purple mb-4" />
+                      <h3 className="text-3xl font-orbitron font-bold mb-4">COMPETITIVE</h3>
+                      <p className="text-muted-foreground mb-6">Соревновательный режим 5 на 5</p>
+                      <Button className="w-full bg-neon-purple hover:bg-neon-purple/80 text-white font-orbitron font-bold">
+                        ИГРАТЬ
+                      </Button>
+                    </Card>
+                  </div>
+                </>
+              )}
             </div>
           )}
         </main>
