@@ -14,6 +14,7 @@ const Index = () => {
   const [wallhack, setWallhack] = useState(false);
   const [connectingServer, setConnectingServer] = useState<string | null>(null);
   const [connectedServer, setConnectedServer] = useState<string | null>(null);
+  const [inGame, setInGame] = useState(false);
 
   const menuItems = [
     { id: 'home', label: 'Главная', icon: 'Home' },
@@ -45,8 +46,14 @@ const Index = () => {
     setTimeout(() => {
       setConnectingServer(null);
       setConnectedServer(serverName);
+      setInGame(true);
       setActiveSection('play');
     }, 2000);
+  };
+
+  const handleStartGame = () => {
+    const randomServer = maps[Math.floor(Math.random() * maps.length)].name;
+    handleConnectToServer(randomServer);
   };
 
   const playerStats = {
@@ -332,7 +339,94 @@ const Index = () => {
 
           {activeSection === 'play' && (
             <div className="space-y-6 animate-fade-in">
-              {connectedServer ? (
+              {inGame ? (
+                <>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-4xl font-orbitron font-black text-neon-cyan neon-glow">ИГРА: {connectedServer}</h2>
+                    <div className="flex gap-2">
+                      <Badge className="bg-neon-green/20 text-neon-green border-neon-green pulse-neon px-4 py-2">
+                        <Icon name="Users" size={16} className="mr-2" />
+                        24/32
+                      </Badge>
+                      <Badge className="bg-neon-cyan/20 text-neon-cyan border-neon-cyan px-4 py-2">
+                        PING: 25ms
+                      </Badge>
+                    </div>
+                  </div>
+
+                  <div className="relative h-[600px] bg-gradient-to-b from-slate-900 to-slate-800 rounded-2xl border-2 border-neon-cyan/50 neon-border overflow-hidden">
+                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAgTSAwIDIwIEwgNDAgMjAgTSAyMCAwIEwgMjAgNDAgTSAwIDMwIEwgNDAgMzAgTSAzMCAwIEwgMzAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzBmZjJmZiIgc3Ryb2tlLW9wYWNpdHk9IjAuMSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30"></div>
+                    
+                    <div className="absolute top-4 left-4 space-y-2">
+                      <div className="bg-black/70 backdrop-blur-sm px-4 py-2 rounded-lg border border-neon-cyan/30">
+                        <div className="flex items-center gap-2 text-neon-cyan font-orbitron">
+                          <Icon name="Heart" size={20} />
+                          <span className="font-bold">100 HP</span>
+                        </div>
+                      </div>
+                      <div className="bg-black/70 backdrop-blur-sm px-4 py-2 rounded-lg border border-neon-purple/30">
+                        <div className="flex items-center gap-2 text-neon-purple font-orbitron">
+                          <Icon name="Shield" size={20} />
+                          <span className="font-bold">100 ARMOR</span>
+                        </div>
+                      </div>
+                      <div className="bg-black/70 backdrop-blur-sm px-4 py-2 rounded-lg border border-yellow-500/30">
+                        <div className="flex items-center gap-2 text-yellow-500 font-orbitron">
+                          <span className="text-2xl">💰</span>
+                          <span className="font-bold">$16,000</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="absolute top-4 right-4 space-y-2">
+                      <div className="bg-black/70 backdrop-blur-sm px-4 py-2 rounded-lg border border-neon-green/30">
+                        <div className="text-neon-green font-orbitron font-bold text-lg">
+                          УБИЙСТВ: {playerStats.kills}
+                        </div>
+                      </div>
+                      <div className="bg-black/70 backdrop-blur-sm px-4 py-2 rounded-lg border border-neon-purple/30">
+                        <div className="text-neon-purple font-orbitron font-bold text-lg">
+                          СМЕРТЕЙ: {playerStats.deaths}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
+                      <div className="bg-black/70 backdrop-blur-sm px-6 py-3 rounded-lg border border-neon-cyan/50 neon-border">
+                        <div className="flex items-center gap-4">
+                          <Icon name="Crosshair" size={32} className="text-neon-cyan" />
+                          <div className="font-orbitron">
+                            <div className="text-white font-bold text-xl">AK-47</div>
+                            <div className="text-neon-cyan text-sm">30 / 90</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="text-center space-y-4">
+                        <Icon name="Crosshair" size={48} className="mx-auto text-neon-cyan opacity-50" />
+                        <p className="text-white/70 font-orbitron">Используй WASD для движения</p>
+                        <p className="text-white/70 font-orbitron">ЛКМ - стрелять | R - перезарядка</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-4 justify-center pt-4">
+                    <Button 
+                      onClick={() => {
+                        setInGame(false);
+                        setConnectedServer(null);
+                      }}
+                      variant="outline" 
+                      className="border-neon-purple text-neon-purple hover:bg-neon-purple/20 font-orbitron neon-border"
+                    >
+                      <Icon name="LogOut" size={18} className="mr-2" />
+                      ВЫЙТИ ИЗ ИГРЫ
+                    </Button>
+                  </div>
+                </>
+              ) : connectedServer ? (
                 <>
                   <div className="flex items-center justify-between mb-8">
                     <h2 className="text-4xl font-orbitron font-black text-neon-cyan neon-glow">ИГРА НА СЕРВЕРЕ</h2>
@@ -369,7 +463,7 @@ const Index = () => {
                       <h3 className="text-3xl font-orbitron font-bold mb-4">DEATHMATCH</h3>
                       <p className="text-muted-foreground mb-6">Классический режим свободной игры</p>
                       <Button 
-                        onClick={() => setActiveSection('maps')}
+                        onClick={handleStartGame}
                         className="w-full bg-neon-cyan hover:bg-neon-cyan/80 text-black font-orbitron font-bold"
                       >
                         ИГРАТЬ
@@ -381,7 +475,7 @@ const Index = () => {
                       <h3 className="text-3xl font-orbitron font-bold mb-4">COMPETITIVE</h3>
                       <p className="text-muted-foreground mb-6">Соревновательный режим 5 на 5</p>
                       <Button 
-                        onClick={() => setActiveSection('maps')}
+                        onClick={handleStartGame}
                         className="w-full bg-neon-purple hover:bg-neon-purple/80 text-white font-orbitron font-bold"
                       >
                         ИГРАТЬ
